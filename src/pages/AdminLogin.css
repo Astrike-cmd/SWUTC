@@ -1,0 +1,48 @@
+.adminlogin-container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 25px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.adminlogin-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.adminlogin-container label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.adminlogin-container input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.adminlogin-container button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px;
+  background: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.adminlogin-container button:hover {
+  background: #005fa3;
+}
+
+.error {
+  margin-top: 10px;
+  color: red;
+  text-align: center;
+}

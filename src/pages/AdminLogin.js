@@ -2,39 +2,51 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase-config';
 import { useNavigate } from 'react-router-dom';
-import './AdminLogin.css';
+import './Login.css'; // reuse same styles as tenant login
 
 function AdminLogin() {
-  const [email, setEmail] = useState('admin@swutc.com'); 
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleAdminLogin = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      if (email === 'admin@swutc.com') {
-        navigate('/admin-dashboard');
-      } else {
-        setError('Not an admin account.');
+      // Force check for exact admin email
+      if (email.toLowerCase() !== "admin@swutc.com") {
+        setError("Access denied. Only admin can log in here.");
+        return;
       }
+
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/admin-dashboard");
     } catch (err) {
-      setError('Invalid admin credentials');
+      setError("Invalid admin credentials.");
     }
   };
 
   return (
-    <div className="adminlogin-container">
+    <div className="login-container">
       <h2>Admin Login</h2>
-      <form onSubmit={handleLogin}>
-        <label>Admin Email:</label>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
-        <label>Password:</label>
-        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required />
+      <form onSubmit={handleAdminLogin}>
+        <input
+          type="email"
+          placeholder="Admin Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Admin Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
         <button type="submit">Login</button>
-        {error && <p className="error">{error}</p>}
       </form>
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }

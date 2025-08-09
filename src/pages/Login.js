@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase-config';
 import { useNavigate } from 'react-router-dom';
-import './Login.css'; // your existing CSS
+import './Login.css';
 
 function Login() {
-  const [flatNo, setFlatNo] = useState('');
-  const [password, setPassword] = useState('');
-  const [err, setErr] = useState('');
+  const [flatNo, setFlatNo] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -15,9 +15,15 @@ function Login() {
     try {
       const email = `${flatNo}@swutc.com`;
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/tenant-dashboard');
+
+      // Decide based on email
+      if (email.toLowerCase() === "admin@swutc.com") {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/tenant-dashboard");
+      }
     } catch (err) {
-      setErr('Invalid flat number or password');
+      setError("Invalid flat number or password");
     }
   };
 
@@ -25,13 +31,23 @@ function Login() {
     <div className="login-container">
       <h2>Tenant Login</h2>
       <form onSubmit={handleLogin}>
-        <label>Flat No.:</label>
-        <input value={flatNo} onChange={(e)=>setFlatNo(e.target.value)} placeholder="e.g., 101" required />
-        <label>Password:</label>
-        <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Password" required />
+        <input
+          type="text"
+          placeholder="Flat Number"
+          value={flatNo}
+          onChange={(e) => setFlatNo(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
         <button type="submit">Login</button>
-        {err && <p className="error">{err}</p>}
       </form>
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }
