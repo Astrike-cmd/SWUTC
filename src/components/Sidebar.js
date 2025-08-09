@@ -8,7 +8,8 @@ function Sidebar() {
       <h2>SWUTC</h2>
       <nav>
         <Link to="/">Home</Link>
-        <Link to="/login">Login</Link>
+        <Link to="/login">Tenant Login</Link>
+        <Link to="/admin-login">Admin Login</Link>
       </nav>
     </div>
   );
