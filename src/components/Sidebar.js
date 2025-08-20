@@ -1,18 +1,28 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Sidebar.css';
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
+import "./Sidebar.css";
 
-function Sidebar() {
+export default function Sidebar() {
   return (
-    <div className="sidebar">
-      <h2>SWUTC</h2>
-      <nav>
-        <Link to="/">Home</Link>
-        <Link to="/login">Tenant Login</Link>
-        <Link to="/admin-login">Admin Login</Link>
+    <aside className="sidebar">
+      <div className="brand">
+        <Link to="/">SWUTC</Link>
+      </div>
+
+      <nav className="menu">
+        <NavLink to="/" end className="item">
+          Home
+        </NavLink>
+        <NavLink to="/login" className="item">
+          Tenant Login
+        </NavLink>
+        <NavLink to="/admin-login" className="item">
+          Admin Login
+        </NavLink>
+        <NavLink to="/landlord-login" className="item">
+          Landlord Login
+        </NavLink>
       </nav>
-    </div>
+    </aside>
   );
 }
-
-export default Sidebar;

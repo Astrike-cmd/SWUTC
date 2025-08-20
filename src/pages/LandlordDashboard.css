@@ -1,0 +1,100 @@
+.landlord-dashboard-container {
+  margin-left: 220px; /* space for sidebar */
+  padding: 40px;
+  background-color: #f8f9fc;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.landlord-dashboard h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+.filter-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.filter-section select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 14px;
+}
+
+.logs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.log-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.log-card:hover {
+  transform: translateY(-3px);
+}
+
+.log-card h4 {
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.log-card p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.usage-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.usage-list li {
+  background: #f1f5f9;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  font-size: 13px;
+  color: #333;
+}
+
+.filter-bar {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.filter-bar input {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.filter-bar button {
+  padding: 6px 12px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.filter-bar button:hover {
+  background-color: #0056b3;
+}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { db, auth } from "../firebase-config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import "./TenantDashboard.css";
 
 function TenantDashboard() {
@@ -34,12 +34,24 @@ function TenantDashboard() {
     if (!user) return alert("Not logged in");
 
     try {
+      // 🔹 Get tenant flat number from tenants collection
+      const tenantRef = doc(db, "tenants", user.uid);
+      const tenantSnap = await getDoc(tenantRef);
+
+      let flatNumber = "Unknown";
+      if (tenantSnap.exists()) {
+        flatNumber = tenantSnap.data().flatNumber;
+      }
+
+      // 🔹 Save usage log with flatNumber
       await addDoc(collection(db, "waterUsage"), {
         uid: user.uid,
+        flatNumber: flatNumber,
         usage,
         totalLitres,
         date: serverTimestamp()
       });
+
       alert("Usage logged!");
       setUsage(categories.reduce((acc, category) => ({ ...acc, [category.key]: 0 }), {}));
     } catch (err) {

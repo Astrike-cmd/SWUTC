@@ -1,138 +1,71 @@
-.admindash-wrap {
-  max-width: 1100px;
-  margin: 30px auto;
-  padding: 18px;
-}
-
-.admindash-wrap h2 {
-  color: #1f5474;
-  margin-bottom: 14px;
-  text-align: left;
-}
-
-.loading,
-.empty,
-.error {
-  text-align: center;
-  padding: 12px;
-  margin: 12px 0;
-}
-
-.error {
-  background: #ffe9e9;
-  color: #c0392b;
-  border-radius: 8px;
-}
-
-.table-wrap {
-  overflow-x: auto;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-}
-
-.usage-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 800px;
-}
-
-.usage-table thead th {
-  text-align: left;
-  padding: 12px 16px;
-  border-bottom: 1px solid #eef2f6;
-  background: #fbfdff;
-  color: #34495e;
-}
-
-.usage-table tbody tr.row-main {
-  transition: background 0.12s ease;
-}
-
-.usage-table tbody tr.row-main:nth-child(odd) {
+.admin-dashboard {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
   background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  font-family: "Arial", sans-serif;
 }
 
-.usage-table tbody tr.row-main:nth-child(even) {
-  background: #fbfcfd;
+.admin-dashboard h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  color: #333;
 }
 
-.usage-table td {
-  padding: 12px 16px;
-  vertical-align: middle;
-  border-bottom: 1px solid #f2f6f9;
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
 }
 
-.btn {
-  padding: 6px 10px;
-  background: #0077cc;
+.admin-form input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.admin-form input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.admin-form button {
+  padding: 12px;
+  background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background: #005fa3;
-}
-
-/* details row */
-.row-details td {
-  background: #f9fbfd;
-  padding: 0; /* details panel has its own padding */
-  border-bottom: 1px solid #eef2f6;
-}
-
-.details-panel {
-  padding: 14px 18px;
-}
-
-.breakdown-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.breakdown-item {
-  background: white;
-  padding: 10px;
   border-radius: 8px;
-  border: 1px solid #eef2f6;
-  text-align: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.breakdown-item .cat {
-  font-weight: 600;
-  color: #2d3b45;
-  margin-bottom: 6px;
+.admin-form button:hover {
+  background-color: #0056b3;
 }
 
-.breakdown-item .val {
-  font-size: 0.95rem;
+.admin-dashboard h3 {
+  margin-top: 30px;
+  font-size: 1.4rem;
   color: #333;
-  margin-bottom: 4px;
 }
 
-.breakdown-item .litres {
-  font-size: 0.88rem;
-  color: #1f5474;
+.admin-dashboard ul {
+  list-style: none;
+  padding: 0;
 }
 
-/* details footer */
-.details-footer {
-  margin-top: 12px;
-  text-align: right;
-  font-weight: 700;
-  color: #1f5474;
-}
-
-/* responsive */
-@media (max-width: 680px) {
-  .usage-table thead th {
-    font-size: 0.95rem;
-  }
-  .breakdown-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+.admin-dashboard li {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-size: 1rem;
 }

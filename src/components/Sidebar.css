@@ -1,33 +1,57 @@
+/* Container */
 .sidebar {
-  width: 200px;
-  height: 100vh;
-  background-color: #f5f7fa;
-  padding: 20px;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
   position: fixed;
   top: 0;
   left: 0;
+  width: 200px;           /* keep in sync with App.js marginLeft */
+  height: 100vh;
+  background: #f6f8fb;
+  border-right: 1px solid #e5e9f0;
+  padding: 18px 14px;
+  box-sizing: border-box;
 }
 
-.sidebar h2 {
-  margin-bottom: 30px;
-  font-size: 22px;
-  color: #0077cc;
-  text-align: center;
+/* Brand */
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* centers SWUTC as requested */
+  height: 56px;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.5px;
 }
 
-.sidebar nav {
+.brand a {
+  color: #1f5474;
+  text-decoration: none;
+}
+
+/* Menu */
+.menu {
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
-.sidebar nav a {
-  margin-bottom: 15px;
-  color: #333;
+.item {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
   text-decoration: none;
+  color: #133040;
   font-weight: 500;
 }
 
-.sidebar nav a:hover {
-  color: #0077cc;
+.item:hover {
+  background: #eaf2f8;
+  color: #0f2a38;
+}
+
+/* Active route highlight */
+.item.active {
+  background: #d7e9f5;
+  color: #0b2a3a;
+  font-weight: 600;
 }

@@ -1,207 +1,99 @@
-import React, { useEffect, useState } from "react";
-import { db } from "../firebase-config";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  // eslint-disable-next-line
-  limit,
-  // eslint-disable-next-line
-  where,
-} from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../firebase-config";
+import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 import "./AdminDashboard.css";
 
 export default function AdminDashboard() {
-  const [usageLogs, setUsageLogs] = useState([]);
-  const [tenantsMap, setTenantsMap] = useState({}); 
-  const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(null);
+  const [flat, setFlat] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [tenants, setTenants] = useState([]);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  // Fetch existing tenants
+  const fetchTenants = async () => {
+    const tenantsSnap = await getDocs(collection(db, "tenants"));
+    setTenants(tenantsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  };
 
   useEffect(() => {
-    fetchData();
+    fetchTenants();
   }, []);
 
-  async function fetchData() {
-    setLoading(true);
+  const handleRegister = async (e) => {
+    e.preventDefault();
     setError("");
-    try {
-      
-      const tenantsSnapshot = await getDocs(collection(db, "tenants"));
-      const tmap = {};
-      tenantsSnapshot.forEach((doc) => {
-        const data = doc.data();
+    setSuccess("");
 
-        if (data.uid) tmap[data.uid] = data.flatNo || data.flat || data.flatNoString;
-        if (data.email) tmap[data.email] = data.flatNo || data.flat || data.flatNoString;
+    try {
+      // Auto-generate email from flat number
+      const email = `${flat}@swutc.com`;
+
+      // Create Firebase Auth user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = userCredential.user.uid;
+
+      // ✅ Save tenant in Firestore using UID as the doc ID
+      await setDoc(doc(db, "tenants", uid), {
+        uid,
+        name,
+        flatNumber: flat,
+        email,
+        createdAt: new Date()
       });
-      setTenantsMap(tmap);
 
-      // 2) Load waterUsage logs (newest first)
-      const q = query(collection(db, "waterUsage"), orderBy("date", "desc"));
-      const snapshot = await getDocs(q);
-      const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-
-      setUsageLogs(list);
+      setSuccess(`Tenant for Flat ${flat} added successfully!`);
+      setFlat("");
+      setName("");
+      setPassword("");
+      fetchTenants();
     } catch (err) {
-      console.error("Error fetching data:", err);
-      setError("Failed to load data. Check console for details.");
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
-  }
-
-  function shortId(uid) {
-    if (!uid) return "—";
-    return uid.slice(0, 6) + (uid.length > 6 ? "…" : "");
-  }
-
-  function formatDate(ts) {
-    if (!ts) return "—";
-    // ts may be Firestore Timestamp
-    if (ts.toDate) {
-      const d = ts.toDate();
-      return d.toLocaleString();
-    }
-    // fallback string
-    try {
-      const d = new Date(ts);
-      return d.toLocaleString();
-    } catch {
-      return String(ts);
-    }
-  }
-
-  const toggleExpand = (id) => {
-    setExpanded((prev) => (prev === id ? null : id));
   };
 
   return (
-    <div className="admindash-wrap">
-      <h2>Admin Dashboard — Usage Logs</h2>
+    <div className="admin-dashboard">
+      <h2>Admin Dashboard</h2>
 
-      {error && <div className="error">{error}</div>}
-      {loading ? (
-        <div className="loading">Loading usage logs…</div>
-      ) : usageLogs.length === 0 ? (
-        <div className="empty">No usage logs found.</div>
-      ) : (
-        <div className="table-wrap">
-          <table className="usage-table">
-            <thead>
-              <tr>
-                <th>Tenant</th>
-                <th>Date</th>
-                <th>Total (L)</th>
-                <th>Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usageLogs.map((log) => {
-                const uid = log.uid || log.userId || "unknown";
-                // try to find flat number by uid or by email if stored
-                const flatByUid = tenantsMap[uid];
-                const flatByEmail = tenantsMap[log.email]; // if usage had email
-                const displayName = flatByUid || flatByEmail || shortId(uid);
+      <form onSubmit={handleRegister} className="admin-form">
+        <input
+          type="text"
+          placeholder="Flat Number"
+          value={flat}
+          onChange={(e) => setFlat(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Tenant Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Set Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit">Add Tenant</button>
+      </form>
 
-                return (
-                  <React.Fragment key={log.id}>
-                    <tr className="row-main">
-                      <td>{displayName}</td>
-                      <td>{formatDate(log.date)}</td>
-                      <td>{log.totalLitres ?? calculateTotalFromUsage(log.usage)}</td>
-                      <td>
-                        <button
-                          className="btn"
-                          onClick={() => toggleExpand(log.id)}
-                        >
-                          {expanded === log.id ? "Hide" : "View Details"}
-                        </button>
-                      </td>
-                    </tr>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {success && <p style={{ color: "green" }}>{success}</p>}
 
-                    {expanded === log.id && (
-                      <tr className="row-details">
-                        <td colSpan="4">
-                          <div className="details-panel">
-                            <h4>Breakdown</h4>
-                            {log.usage ? (
-                              <div className="breakdown-grid">
-                                {Object.entries(log.usage).map(([key, val]) => (
-                                  <div key={key} className="breakdown-item">
-                                    <div className="cat">{prettyName(key)}</div>
-                                    <div className="val">{val} times</div>
-                                    {/* if possible show litre estimate per category if stored in doc */}
-                                    <div className="litres">
-                                      {computeLitres(key, val)} L estimated
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <div>No category data available for this entry.</div>
-                            )}
-
-                            <div className="details-footer">
-                              <strong>Total:</strong>{" "}
-                              {log.totalLitres ?? calculateTotalFromUsage(log.usage)} L
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <h3>Existing Tenants</h3>
+      <ul>
+        {tenants.map((tenant) => (
+          <li key={tenant.id}>
+            {tenant.name} – Flat {tenant.flatNumber} ({tenant.email})
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
-
-/* ---------- Helper functions ---------- */
-
-/** prettyName: turn key strings into readable labels */
-function prettyName(key) {
-  const map = {
-    toothbrushing: "Toothbrushing",
-    shower: "Shower",
-    washingMachine: "Washing Machine",
-    dishwashing: "Dishwashing",
-    cooking: "Cooking",
-    drinking: "Drinking",
-    cleaning: "Cleaning / Mopping",
-    gardening: "Gardening / Plants",
-  };
-  return map[key] || key;
-}
-
-/** presets (must match TenantDashboard presets) */
-const PRESETS = {
-  toothbrushing: 2,
-  shower: 50,
-  washingMachine: 60,
-  dishwashing: 15,
-  cooking: 10,
-  drinking: 3,
-  cleaning: 20,
-  gardening: 15,
-};
-
-/** computeLitres: estimate litres from count */
-function computeLitres(key, times) {
-  const per = PRESETS[key] ?? 0;
-  const t = Number(times) || 0;
-  return per * t;
-}
-
-/** calculateTotalFromUsage: sum category estimates if total not stored */
-function calculateTotalFromUsage(usageObj) {
-  if (!usageObj) return 0;
-  return Object.entries(usageObj).reduce((sum, [k, v]) => {
-    return sum + computeLitres(k, v);
-  }, 0);
 }

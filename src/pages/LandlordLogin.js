@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth, db } from "../firebase-config";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import "./Login.css";
+import { auth } from "../firebase-config"; // make sure auth is exported from firebase-config
+import "./LandlordLogin.css";
 
-export default function TenantLogin() {
+// Change this to whatever landlord email you want to authorize
+const LANDLORD_EMAIL = "landlord@swutc.com";
+
+export default function LandlordLogin() {
   const navigate = useNavigate();
-  const [flat, setFlat] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,26 +18,19 @@ export default function TenantLogin() {
     e.preventDefault();
     setError("");
 
+    const emailLower = email.trim().toLowerCase();
+    if (emailLower !== LANDLORD_EMAIL) {
+      setError("This login is for the landlord only.");
+      return;
+    }
+
     try {
       setLoading(true);
-
-      // Convert flat number to email scheme
-      const email = `${flat}@swutc.com`;
-
-      const userCred = await signInWithEmailAndPassword(auth, email, password);
-
-      // Check tenants collection
-      const q = query(collection(db, "tenants"), where("uid", "==", userCred.user.uid));
-      const querySnapshot = await getDocs(q);
-
-      if (querySnapshot.empty) {
-        await signOut(auth);
-        setError("This flat is not registered as a tenant.");
-        return;
-      }
-
-      navigate("/tenant-dashboard");
+      await signInWithEmailAndPassword(auth, emailLower, password);
+      navigate("/landlord-dashboard");
     } catch (err) {
+      // If they somehow sign in but aren't allowed, ensure signout
+      try { await signOut(auth); } catch {}
       setError(err.message || "Login failed");
     } finally {
       setLoading(false);
@@ -45,14 +40,15 @@ export default function TenantLogin() {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2 className="login-title">Tenant Login</h2>
+        <h2 className="login-title">Landlord Login</h2>
         <form onSubmit={handleLogin}>
           <input
-            type="text"
-            placeholder="Flat Number"
-            value={flat}
-            onChange={(e) => setFlat(e.target.value)}
+            type="email"
+            placeholder="Landlord Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="login-input"
+            autoComplete="username"
             required
           />
           <input
@@ -61,6 +57,7 @@ export default function TenantLogin() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="login-input"
+            autoComplete="current-password"
             required
           />
           <button type="submit" className="login-button" disabled={loading}>

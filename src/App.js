@@ -1,41 +1,34 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
 
-// Components
-import Sidebar from './components/Sidebar';
-import RequireAuth from './components/RequireAuth';
+import Home from "./pages/Home";
+import Login from "./pages/Login";               
+import AdminLogin from "./pages/AdminLogin";
+import LandlordLogin from "./pages/LandlordLogin";
 
-// Pages
-import Home from './pages/Home';
-import Login from './pages/Login';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
-import TenantDashboard from './pages/TenantDashboard';
+import TenantDashboard from "./pages/TenantDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import LandlordDashboard from "./pages/LandlordDashboard";
 
 function App() {
   return (
     <Router>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: "flex" }}>
         <Sidebar />
-        <div style={{ marginLeft: '200px', padding: '20px', flexGrow: 1 }}>
+        {/* Keep this margin in sync with Sidebar width */}
+        <div style={{ marginLeft: "200px", padding: "20px", flexGrow: 1 }}>
           <Routes>
-            {/* Public routes */}
             <Route path="/" element={<Home />} />
+            {/* keep if you use a generic login */}
             <Route path="/login" element={<Login />} />
+
             <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/landlord-login" element={<LandlordLogin />} />
 
-            {/* Protected admin route */}
-            <Route
-              path="/admin-dashboard"
-              element={
-                <RequireAuth adminOnly={true}>
-                  <AdminDashboard />
-                </RequireAuth>
-              }
-            />
-
-            {/* Tenant dashboard (unprotected for now) */}
             <Route path="/tenant-dashboard" element={<TenantDashboard />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/landlord-dashboard" element={<LandlordDashboard />} />
           </Routes>
         </div>
       </div>
