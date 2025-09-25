@@ -7,3 +7,6 @@ Alpha v0.1: Made Sidebar, Home & Login Page
 
 Log:
 Alpha v0.2: Made Dashboard for Admin & User 
+
+Log:
+Final Release V1.0
